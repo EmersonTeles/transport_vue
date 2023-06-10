@@ -18,3 +18,8 @@ export default defineComponent({
   }
 })
 </script>
+<style>
+.xx-large {
+  font-size: calc(var(--v-icon-size-multiplier) * 4em) !important;
+}
+</style>
