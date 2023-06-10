@@ -5,13 +5,43 @@
       <h1 class="text-h6 text-white">Melhor Frete</h1>
     </v-toolbar>
     <main class="content">
-      <ShipmentForm />
+      <ShipmentForm @formSubmited="handleFormSubmit" />
+      <BestTransport v-if="searchOpen" :destination="destination" :weight="weight" />
+      <v-btn
+        v-if="searchOpen"
+        color="cyan-lighten-1"
+        width="160"
+        height="30"
+        class="cleanBtn"
+        @click="clear"
+        >Limpar</v-btn
+      >
     </main>
   </v-card>
 </template>
 
-<script setup lang="ts">
+<script lang="ts">
+import { defineComponent } from 'vue'
 import ShipmentForm from './ShipmentForm.vue'
+import BestTransport from './BestTransport.vue'
+
+export default defineComponent({
+  name: 'ShipmentCard',
+  methods: {
+    handleFormSubmit(destination: string, weight: string) {
+      this.destination = destination
+      this.weight = weight
+      this.searchOpen = true
+    },
+    clear() {
+      this.searchOpen = false
+    }
+  },
+  components: { ShipmentForm, BestTransport },
+  data() {
+    return { destination: '', weight: '', searchOpen: false }
+  }
+})
 </script>
 
 <style scoped>
@@ -25,7 +55,7 @@ import ShipmentForm from './ShipmentForm.vue'
   overflow: hidden;
 }
 .shipmentCard > .navbar {
-  background-color: rgba(0, 172, 166, 0.5) !important;
+  background-color: rgba(0, 172, 166, 0.5);
   padding: 0 2rem;
   height: 50px;
 }
@@ -40,5 +70,11 @@ import ShipmentForm from './ShipmentForm.vue'
 .shipmentCard > .content {
   height: calc(100% - 60px);
   padding: 20px;
+  display: flex;
+}
+.cleanBtn {
+  position: absolute !important;
+  bottom: 20px !important;
+  right: 40px !important;
 }
 </style>

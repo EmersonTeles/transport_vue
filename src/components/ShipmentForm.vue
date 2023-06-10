@@ -3,12 +3,13 @@
     <h1 class="text-h6">
       <v-icon size="x-small" icon="fas fa-map" class="mr-2 text-black" /> Insira o destino e o peso
     </h1>
-    <form>
+    <v-form @submit.prevent>
       <div class="inputGroup">
         <label>Destino</label>
         <v-select
           variant="solo"
           label="Selecione o destino"
+          v-model="destination"
           :items="[
             'São Paulo',
             'Belo Horizonte',
@@ -26,16 +27,68 @@
 
       <div class="inputGroup">
         <label>Peso</label>
-        <v-text-field label="Peso da carga em Kg" variant="solo"></v-text-field>
+        <v-text-field v-model="weight" label="Peso da carga em Kg" variant="solo"></v-text-field>
       </div>
       <v-row class="mt-1" justify="center">
-        <v-btn variant="flat" color="cyan-lighten-1"> Analisar </v-btn></v-row
+        <v-btn
+          width="160"
+          height="30"
+          type="submit"
+          variant="flat"
+          color="cyan-lighten-1"
+          @click="submit"
+        >
+          Analisar
+        </v-btn></v-row
       >
-    </form>
+    </v-form>
   </section>
+  <v-dialog v-model="dialogError" width="auto">
+    <v-card class="pa-3">
+      <v-row class="ma-2" justify="center">
+        <v-icon class="xx-large" icon="fa:fas fa-circle-exclamation" />
+      </v-row>
+      <v-card-text class="text-h5"> Insira os valores para realizar a análise. </v-card-text>
+      <v-card-actions>
+        <v-row justify="center">
+          <v-btn
+            width="160"
+            height="30"
+            type="submit"
+            variant="flat"
+            color="cyan-lighten-1"
+            @click="dialogError = false"
+            >Fechar</v-btn
+          >
+        </v-row>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
-<script setup lang="ts"></script>
+<script lang="ts">
+import { defineComponent } from 'vue'
+export default defineComponent({
+  name: 'ShipmentForm',
+  methods: {
+    submit() {
+      if (this.destination == '' || this.weight == '') {
+        this.dialogError = true
+        return
+      }
+      this.$emit('formSubmited', this.destination, this.weight)
+    }
+  },
+  data() {
+    return {
+      destination: '',
+      weight: '',
+      dialogError: false
+    }
+  },
+  components: {}
+})
+</script>
 <style>
 .ShipmentForm {
   width: 420px;
@@ -43,6 +96,9 @@
   background-color: rgb(230, 230, 230);
   padding: 40px;
   border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 .ShipmentForm > h1 {
   font-size: 1.5em;
@@ -51,7 +107,6 @@
 .ShipmentForm .inputGroup {
   display: flex;
   flex-direction: column;
-  gap: 10px;
 }
 .inputGroup > input,
 select {
