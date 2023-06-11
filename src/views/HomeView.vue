@@ -25,5 +25,6 @@ export default defineComponent({
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 0 1rem;
 }
 </style>

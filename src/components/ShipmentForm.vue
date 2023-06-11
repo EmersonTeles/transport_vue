@@ -91,7 +91,7 @@ export default defineComponent({
 </script>
 <style>
 .ShipmentForm {
-  width: 420px;
+  width: 520px;
   height: -webkit-fill-available;
   background-color: rgb(230, 230, 230);
   padding: 40px;
