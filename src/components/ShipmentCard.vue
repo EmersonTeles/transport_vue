@@ -7,12 +7,15 @@
     <main class="content">
       <ShipmentForm @formSubmited="handleFormSubmit" />
       <BestTransport v-if="searchOpen" :destination="destination" :weight="weight" />
+      <div class="d-flex align-center justify-center w-100" v-else>
+        <h1 class="text-h4">Nenhum dado selecionado.</h1>
+      </div>
       <v-btn
         v-if="searchOpen"
         color="cyan-lighten-1"
         width="160"
         height="30"
-        class="cleanBtn"
+        class="clearBtn"
         @click="clear"
         >Limpar</v-btn
       >
@@ -30,7 +33,7 @@ export default defineComponent({
   methods: {
     handleFormSubmit(destination: string, weight: string) {
       this.destination = destination
-      this.weight = weight
+      this.weight = Number(weight)
       this.searchOpen = true
     },
     clear() {
@@ -39,7 +42,7 @@ export default defineComponent({
   },
   components: { ShipmentForm, BestTransport },
   data() {
-    return { destination: '', weight: '', searchOpen: false }
+    return { destination: '', weight: 0, searchOpen: false }
   }
 })
 </script>
@@ -72,7 +75,7 @@ export default defineComponent({
   padding: 20px;
   display: flex;
 }
-.cleanBtn {
+.clearBtn {
   position: absolute !important;
   bottom: 20px !important;
   right: 40px !important;
