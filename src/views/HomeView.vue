@@ -5,6 +5,11 @@
   <div class="home-content">
     <shipmentCard />
   </div>
+  <div class="mobileWarning">
+    <h1 class="text-h4 text-center">
+      Esta aplicação não possui referência para interface mobile :/
+    </h1>
+  </div>
 </template>
 
 <script lang="ts">
@@ -26,5 +31,21 @@ export default defineComponent({
   align-items: center;
   justify-content: center;
   padding: 0 1rem;
+}
+
+.mobileWarning {
+  display: none;
+}
+@media (max-width: 780px) {
+  .home-content {
+    display: none;
+  }
+
+  .mobileWarning {
+    height: calc(100vh - 60px) !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
 </style>

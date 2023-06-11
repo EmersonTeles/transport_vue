@@ -183,7 +183,7 @@ export default defineComponent({
 .BestTransport_title {
   font-size: 1.4em;
   font-weight: 500;
-  width: 60%;
+  width: 76%;
 }
 .BestTransport_options {
   width: 100%;
@@ -207,13 +207,17 @@ export default defineComponent({
   align-items: flex-start;
   justify-content: space-evenly;
 }
+.BestTransport_options-option > div > h2 {
+  font-size: 1.4em;
+}
 .BestTransport_options-option > span {
   display: flex;
   align-items: center;
   justify-content: center;
   background-color: rgba(0, 172, 166, 0.5);
   height: 100%;
-  width: 90px;
+  max-width: 90px;
+  width: -webkit-fill-available;
   grid-column: 1/2;
   grid-row: 1/3;
 }
@@ -225,5 +229,24 @@ export default defineComponent({
 }
 .BestTransport_options-option:first-child > span {
   background-color: rgba(0, 172, 166, 0.3);
+}
+
+@media (max-width: 1000px) {
+  .BestTransport_title {
+    width: 100%;
+  }
+  .BestTransport_options-option {
+    gap: 5px;
+  }
+  .BestTransport_options-option > div {
+    padding: 5px 10px;
+  }
+  .BestTransport_options-option > span {
+    max-width: 70px;
+    width: -webkit-fill-available;
+  }
+  .BestTransport_options-option > div > h2 {
+    font-size: 1.2em;
+  }
 }
 </style>

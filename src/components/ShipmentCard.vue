@@ -8,7 +8,7 @@
       <ShipmentForm @formSubmited="handleFormSubmit" />
       <BestTransport v-if="searchOpen" :destination="destination" :weight="weight" />
       <div class="d-flex align-center justify-center w-100" v-else>
-        <h1 class="text-h4">Nenhum dado selecionado.</h1>
+        <h1 class="text-h4 text-center">Nenhum dado selecionado.</h1>
       </div>
       <v-btn
         v-if="searchOpen"
@@ -79,5 +79,14 @@ export default defineComponent({
   position: absolute !important;
   bottom: 20px !important;
   right: 40px !important;
+}
+@media (max-width: 1000px) {
+  .shipmentCard > .content {
+    padding: 10px;
+  }
+  .clearBtn {
+    bottom: 10px !important;
+    right: 30px !important;
+  }
 }
 </style>

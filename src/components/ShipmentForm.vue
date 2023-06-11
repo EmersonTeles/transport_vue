@@ -91,7 +91,8 @@ export default defineComponent({
 </script>
 <style>
 .ShipmentForm {
-  width: 520px;
+  max-width: 400px;
+  width: -webkit-fill-available;
   height: -webkit-fill-available;
   background-color: rgb(230, 230, 230);
   padding: 40px;
@@ -115,5 +116,11 @@ select {
   outline: none;
   border: 1px solid rgb(200, 200, 200);
   padding: 0 15px;
+}
+@media (max-width: 1000px) {
+  .ShipmentForm {
+    max-width: 300px;
+    padding: 20px;
+  }
 }
 </style>
