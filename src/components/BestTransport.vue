@@ -9,28 +9,28 @@
         <span><v-icon size="x-large" icon="fas fa-hand-holding-dollar" /></span>
         <div>
           <h2>Frete com menor valor</h2>
-          <p>Transportadora: XXXXXXX LTDA</p>
-          <p>Tempo estimado: YYYYYYY</p>
+          <p>Transportadora: {{ cheapestShipping.name }}</p>
+          <p>Tempo estimado: {{ cheapestShipping.lead_time }}</p>
         </div>
       </article>
       <article class="BestTransport_options-option">
         <div>
           <h2>Preço</h2>
-          <p>{{ priceFormated }}</p>
+          <p>{{ cheapestShipping.cost_transport }}</p>
         </div>
       </article>
       <article class="BestTransport_options-option">
         <span><v-icon size="x-large" icon="fa-solid fa-clock-rotate-left" /></span>
         <div>
           <h2>Frete mais rápido</h2>
-          <p>Transportadora: XXXXXXX LTDA</p>
-          <p>Tempo estimado: YYYYYYY</p>
+          <p>Transportadora: {{ fasterShipping.name }}</p>
+          <p>Tempo estimado: {{ fasterShipping.lead_time }}</p>
         </div>
       </article>
       <article class="BestTransport_options-option">
         <div>
           <h2>Preço</h2>
-          <p>{{ priceFormated }}</p>
+          <p>{{ fasterShipping.cost_transport }}</p>
         </div>
       </article>
     </section>
@@ -39,28 +39,133 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import axios from 'axios'
+interface ShippingType {
+  id: number
+  name: string
+  cost_transport: string
+  city: string
+  lead_time: string
+}
+interface ResponseType {
+  id: number
+  name: string
+  cost_transport_light: string
+  cost_transport_heavy: string
+  city: string
+  lead_time: string
+}
+const ShippingDefault: ShippingType = {
+  id: 1,
+  name: '',
+  cost_transport: '',
+  city: '',
+  lead_time: ''
+}
 export default defineComponent({
   components: {},
-  props: ['destination'],
+  watch: {
+    destination: function () {
+      this.getData()
+    },
+    weight: function () {
+      this.getCheapestShipping()
+      this.getFasterShipping()
+    }
+  },
+  props: {
+    destination: String,
+    weight: Number
+  },
   data() {
-    const appName = ''
-    const price = 1250
-    const priceFormated = price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
-
     return {
-      appName,
-      priceFormated
+      cheapestShipping: ShippingDefault,
+      fasterShipping: ShippingDefault,
+      data: [] as ResponseType[] | null
     }
   },
   created() {
-    // Implemente aqui o GET dos dados da API REST
-    // para que isso ocorra na inicialização da pagina
-    this.appName = 'Melhor Frete'
+    this.getData()
+  },
+  mounted() {
+    this.data
+    this.cheapestShipping
+    this.fasterShipping
   },
   methods: {
     // Implemente aqui os metodos utilizados na pagina
-    methodFoo() {
-      console.log(this.appName)
+    isHeavy() {
+      let heavy = true
+      if (!this.weight) return
+      if (this.weight > 100) {
+        return heavy
+      }
+      heavy = false
+      return heavy
+    },
+    getCheapestShipping() {
+      if (!this.data) return
+      let atual_cost_transport = this.isHeavy()
+        ? this.data[0].cost_transport_heavy
+        : this.data[0].cost_transport_light
+      this.cheapestShipping = {
+        ...this.data[0],
+        cost_transport: atual_cost_transport
+      }
+      for (let i = 1; i < this.data.length; i++) {
+        atual_cost_transport = this.isHeavy()
+          ? this.data[i].cost_transport_heavy
+          : this.data[i].cost_transport_light
+
+        if (
+          this.formatToNumber(this.cheapestShipping.cost_transport) >
+          this.formatToNumber(atual_cost_transport)
+        ) {
+          this.cheapestShipping = {
+            ...this.data[i],
+            cost_transport: atual_cost_transport
+          }
+        }
+      }
+      console.log(this.cheapestShipping)
+    },
+    formatToNumber(text: String) {
+      return Number(text.replace(/[^0-9.-]+/g, ''))
+    },
+    getFasterShipping() {
+      if (!this.data) return
+      let atual_cost_transport = this.isHeavy()
+        ? this.data[0].cost_transport_heavy
+        : this.data[0].cost_transport_light
+      this.fasterShipping = {
+        ...this.data[0],
+        cost_transport: atual_cost_transport
+      }
+      for (let i = 1; i < this.data.length; i++) {
+        atual_cost_transport = this.isHeavy()
+          ? this.data[i].cost_transport_heavy
+          : this.data[i].cost_transport_light
+
+        if (
+          this.formatToNumber(this.fasterShipping.lead_time) >
+          this.formatToNumber(this.data[i].lead_time)
+        ) {
+          this.fasterShipping = {
+            ...this.data[i],
+            cost_transport: atual_cost_transport
+          }
+        }
+      }
+    },
+    async getData() {
+      try {
+        const res = await axios.get(`http://localhost:3000/transport?city=${this.destination}`)
+        this.data = res.data
+        this.getCheapestShipping()
+        this.getFasterShipping()
+      } catch (err) {
+        console.log(err)
+      }
     }
   }
 })
@@ -68,6 +173,7 @@ export default defineComponent({
 
 <style scoped>
 .BestTransport {
+  width: 100%;
   padding: 20px;
   display: flex;
   align-items: start;
