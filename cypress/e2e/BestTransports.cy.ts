@@ -29,4 +29,13 @@ describe('Get Best Transport', () => {
     cy.get('#input-3').type('101')
     cy.get('.v-btn__content').click()
   })
+  it('Shipping to Belo Horizonte with no weight', () => {
+    cy.visit('http://127.0.0.1:5173/')
+    cy.get(
+      ':nth-child(1) > .v-input > .v-input__control > .v-field > .v-field__field > .v-field__input'
+    ).click()
+    cy.get('.v-list-item:nth-child(2)').click()
+    cy.get('.v-btn__content').click()
+    cy.contains('div', 'Insira os valores para realizar a análise.')
+  })
 })
