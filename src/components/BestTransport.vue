@@ -127,7 +127,6 @@ export default defineComponent({
           }
         }
       }
-      console.log(this.cheapestShipping)
     },
     formatToNumber(text: String) {
       return Number(text.replace(/[^0-9.-]+/g, ''))
