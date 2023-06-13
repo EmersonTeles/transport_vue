@@ -154,4 +154,9 @@ export default defineComponent({
     font-size: 1.2em;
   }
 }
+@media (max-width: 780px) {
+  .BestTransport_options {
+    grid-template: initial;
+  }
+}
 </style>

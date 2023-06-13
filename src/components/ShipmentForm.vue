@@ -87,7 +87,7 @@ export default defineComponent({
     },
     verifyInput(weight: string) {
       if (/^[0-9]+$/g.test(weight)) return true
-
+      if (weight == '') return 'Por favor, insira o peso'
       return 'Por favor, insira apenas números.'
     }
   },
@@ -135,6 +135,11 @@ select {
   .ShipmentForm {
     max-width: 300px;
     padding: 20px;
+  }
+}
+@media (max-width: 780px) {
+  .ShipmentForm > form {
+    min-height: 15rem;
   }
 }
 </style>

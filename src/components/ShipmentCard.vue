@@ -14,7 +14,7 @@
       />
 
       <div class="d-flex align-center justify-center w-100" v-else>
-        <h1 class="text-h4 text-center">Nenhum dado selecionado.</h1>
+        <h1 class="text-h5 d-xs-none text-center">Nenhum dado selecionado.</h1>
       </div>
       <v-btn
         v-if="searchOpen"
@@ -205,6 +205,20 @@ export default defineComponent({
   .clearBtn {
     bottom: 10px !important;
     right: 30px !important;
+  }
+}
+@media (max-width: 780px) {
+  .shipmentCard {
+    height: auto;
+  }
+  .shipmentCard > .content {
+    flex-direction: column;
+    align-items: center;
+  }
+  .clearBtn {
+    position: relative !important;
+    right: 0 !important;
+    bottom: 0 !important;
   }
 }
 </style>
