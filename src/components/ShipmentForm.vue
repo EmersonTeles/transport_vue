@@ -27,7 +27,12 @@
 
       <div class="inputGroup">
         <label>Peso</label>
-        <v-text-field v-model="weight" label="Peso da carga em Kg" variant="solo"></v-text-field>
+        <v-text-field
+          v-model="weight"
+          :rules="rules"
+          label="Peso da carga em Kg"
+          variant="solo"
+        ></v-text-field>
       </div>
       <v-row class="mt-1" justify="center">
         <v-btn
@@ -76,14 +81,22 @@ export default defineComponent({
         this.dialogError = true
         return
       }
+      if (!/^[0-9]+$/g.test(this.weight)) return
       this.$emit('formSubmited', this.destination, this.weight)
+    },
+    verifyInput(weight: string) {
+      if (/^[0-9]+$/g.test(weight)) return true
+
+      return 'Por favor, insira apenas números.'
     }
   },
   data() {
     return {
       destination: '',
       weight: '',
-      dialogError: false
+      timeout: undefined,
+      dialogError: false,
+      rules: [(weight: string) => this.verifyInput(weight)]
     }
   },
   components: {}
