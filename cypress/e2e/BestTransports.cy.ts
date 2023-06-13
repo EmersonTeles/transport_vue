@@ -34,7 +34,6 @@ describe('Get Best Transport', () => {
     cy.get('.v-list-item:nth-child(2)').click()
     cy.get('#input-3').type('101')
     cy.get('.v-btn__content').click()
-
     cy.get(':nth-child(2) > div > p').contains('R$ 122,21')
     cy.get('.BestTransport_options > :nth-child(3) > div > :nth-child(2)').contains(
       'Transportadora: Expresso Oriente'
@@ -46,6 +45,14 @@ describe('Get Best Transport', () => {
       ':nth-child(1) > .v-input > .v-input__control > .v-field > .v-field__field > .v-field__input'
     ).click()
     cy.get('.v-list-item:nth-child(2)').click()
+    cy.get('.v-btn__content').click()
+    cy.contains('div', 'Por favor, insira o peso')
+    cy.contains('div', 'Insira os valores para realizar a análise.')
+  })
+  it('Trying to insert non digit Numbers on weight', () => {
+    cy.visit('http://127.0.0.1:5173/')
+    cy.get('#input-3').type('not a number')
+    cy.contains('div', 'Por favor, insira apenas números.')
     cy.get('.v-btn__content').click()
     cy.contains('div', 'Insira os valores para realizar a análise.')
   })
