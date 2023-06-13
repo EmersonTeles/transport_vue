@@ -39,24 +39,10 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import axios from 'axios'
-interface ShippingType {
-  id: number
-  name: string
-  cost_transport: string
-  city: string
-  lead_time: string
-}
-interface ResponseType {
-  id: number
-  name: string
-  cost_transport_light: string
-  cost_transport_heavy: string
-  city: string
-  lead_time: string
-}
+import { type ShippingType } from '@/types/ShippingType'
+
 const ShippingDefault: ShippingType = {
-  id: 1,
+  id: 0,
   name: '',
   cost_transport: '',
   city: '',
@@ -64,109 +50,15 @@ const ShippingDefault: ShippingType = {
 }
 export default defineComponent({
   components: {},
-  watch: {
-    destination: function () {
-      this.getData()
-    },
-    weight: function () {
-      this.getCheapestShipping()
-      this.getFasterShipping()
-    }
-  },
   props: {
-    destination: String,
-    weight: Number
+    destination: { type: String, default: '' },
+    fasterShipping: { type: Object, default: ShippingDefault },
+    cheapestShipping: { type: Object, default: ShippingDefault }
   },
   data() {
-    return {
-      cheapestShipping: ShippingDefault,
-      fasterShipping: ShippingDefault,
-      data: [] as ResponseType[] | null
-    }
+    return {}
   },
-  created() {
-    this.getData()
-  },
-  mounted() {
-    this.data
-    this.cheapestShipping
-    this.fasterShipping
-  },
-  methods: {
-    // Implemente aqui os metodos utilizados na pagina
-    isHeavy() {
-      let heavy = true
-      if (!this.weight) return
-      if (this.weight > 100) {
-        return heavy
-      }
-      heavy = false
-      return heavy
-    },
-    getCheapestShipping() {
-      if (!this.data) return
-      let atual_cost_transport = this.isHeavy()
-        ? this.data[0].cost_transport_heavy
-        : this.data[0].cost_transport_light
-      this.cheapestShipping = {
-        ...this.data[0],
-        cost_transport: atual_cost_transport
-      }
-      for (let i = 1; i < this.data.length; i++) {
-        atual_cost_transport = this.isHeavy()
-          ? this.data[i].cost_transport_heavy
-          : this.data[i].cost_transport_light
-
-        if (
-          this.formatToNumber(this.cheapestShipping.cost_transport) >
-          this.formatToNumber(atual_cost_transport)
-        ) {
-          this.cheapestShipping = {
-            ...this.data[i],
-            cost_transport: atual_cost_transport
-          }
-        }
-      }
-    },
-    formatToNumber(text: String) {
-      return Number(text.replace(/[^0-9.-]+/g, ''))
-    },
-    getFasterShipping() {
-      if (!this.data) return
-      let atual_cost_transport = this.isHeavy()
-        ? this.data[0].cost_transport_heavy
-        : this.data[0].cost_transport_light
-      this.fasterShipping = {
-        ...this.data[0],
-        cost_transport: atual_cost_transport
-      }
-      for (let i = 1; i < this.data.length; i++) {
-        atual_cost_transport = this.isHeavy()
-          ? this.data[i].cost_transport_heavy
-          : this.data[i].cost_transport_light
-
-        if (
-          this.formatToNumber(this.fasterShipping.lead_time) >
-          this.formatToNumber(this.data[i].lead_time)
-        ) {
-          this.fasterShipping = {
-            ...this.data[i],
-            cost_transport: atual_cost_transport
-          }
-        }
-      }
-    },
-    async getData() {
-      try {
-        const res = await axios.get(`http://localhost:3000/transport?city=${this.destination}`)
-        this.data = res.data
-        this.getCheapestShipping()
-        this.getFasterShipping()
-      } catch (err) {
-        console.log(err)
-      }
-    }
-  }
+  methods: {}
 })
 </script>
 

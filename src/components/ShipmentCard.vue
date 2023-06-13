@@ -6,7 +6,13 @@
     </v-toolbar>
     <main class="content">
       <ShipmentForm @formSubmited="handleFormSubmit" />
-      <BestTransport v-if="searchOpen" :destination="destination" :weight="weight" />
+      <BestTransport
+        v-if="searchOpen"
+        :destination="destination"
+        :cheapestShipping="cheapestShipping"
+        :fasterShipping="fasterShipping"
+      />
+
       <div class="d-flex align-center justify-center w-100" v-else>
         <h1 class="text-h4 text-center">Nenhum dado selecionado.</h1>
       </div>
@@ -27,23 +33,131 @@
 import { defineComponent } from 'vue'
 import ShipmentForm from './ShipmentForm.vue'
 import BestTransport from './BestTransport.vue'
-
+import axios from 'axios'
+import { type ShippingType } from '@/types/ShippingType'
+interface ResponseType {
+  id: number
+  name: string
+  cost_transport_light: string
+  cost_transport_heavy: string
+  city: string
+  lead_time: string
+}
+const ShippingDefault: ShippingType = {
+  id: 0,
+  name: '',
+  cost_transport: '',
+  city: '',
+  lead_time: ''
+}
 export default defineComponent({
   name: 'ShipmentCard',
+  data() {
+    return {
+      destination: '',
+      loading: false,
+      weight: 0,
+      searchOpen: false,
+      cheapestShipping: ShippingDefault,
+      fasterShipping: ShippingDefault,
+      data: [] as ResponseType[] | null
+    }
+  },
+  watch: {
+    destination: function () {
+      this.getData()
+    },
+    weight: function () {
+      this.getCheapestShipping()
+      this.getFasterShipping()
+    }
+  },
   methods: {
+    async getData() {
+      try {
+        const res = await axios.get(`http://localhost:3000/transport?city=${this.destination}`)
+        this.data = res.data
+        this.getCheapestShipping()
+        this.getFasterShipping()
+        this.searchOpen = true
+      } catch (err) {
+        console.log(err)
+      }
+    },
     handleFormSubmit(destination: string, weight: string) {
       this.destination = destination
       this.weight = Number(weight)
-      this.searchOpen = true
+      this.getData()
     },
     clear() {
       this.searchOpen = false
+      this.cheapestShipping = ShippingDefault
+      this.fasterShipping = ShippingDefault
+    },
+    isHeavy() {
+      let heavy = true
+      if (!this.weight) return
+      if (this.weight > 100) {
+        return heavy
+      }
+      heavy = false
+      return heavy
+    },
+    getCheapestShipping() {
+      if (!this.data) return
+      let atual_cost_transport = this.isHeavy()
+        ? this.data[0].cost_transport_heavy
+        : this.data[0].cost_transport_light
+      this.cheapestShipping = {
+        ...this.data[0],
+        cost_transport: atual_cost_transport
+      }
+      for (let i = 1; i < this.data.length; i++) {
+        atual_cost_transport = this.isHeavy()
+          ? this.data[i].cost_transport_heavy
+          : this.data[i].cost_transport_light
+
+        if (
+          this.formatToNumber(this.cheapestShipping.cost_transport) >
+          this.formatToNumber(atual_cost_transport)
+        ) {
+          this.cheapestShipping = {
+            ...this.data[i],
+            cost_transport: atual_cost_transport
+          }
+        }
+      }
+    },
+    formatToNumber(text: String) {
+      return Number(text.replace(/[^0-9.-]+/g, ''))
+    },
+    getFasterShipping() {
+      if (!this.data) return
+      let atual_cost_transport = this.isHeavy()
+        ? this.data[0].cost_transport_heavy
+        : this.data[0].cost_transport_light
+      this.fasterShipping = {
+        ...this.data[0],
+        cost_transport: atual_cost_transport
+      }
+      for (let i = 1; i < this.data.length; i++) {
+        atual_cost_transport = this.isHeavy()
+          ? this.data[i].cost_transport_heavy
+          : this.data[i].cost_transport_light
+
+        if (
+          this.formatToNumber(this.fasterShipping.lead_time) >
+          this.formatToNumber(this.data[i].lead_time)
+        ) {
+          this.fasterShipping = {
+            ...this.data[i],
+            cost_transport: atual_cost_transport
+          }
+        }
+      }
     }
   },
-  components: { ShipmentForm, BestTransport },
-  data() {
-    return { destination: '', weight: 0, searchOpen: false }
-  }
+  components: { ShipmentForm, BestTransport }
 })
 </script>
 
