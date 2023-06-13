@@ -75,6 +75,7 @@
 import { defineComponent } from 'vue'
 export default defineComponent({
   name: 'ShipmentForm',
+  emits: ['formSubmited'],
   methods: {
     submit() {
       if (this.destination == '' || this.weight == '') {

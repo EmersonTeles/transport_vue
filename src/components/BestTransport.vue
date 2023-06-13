@@ -16,7 +16,14 @@
       <article class="BestTransport_options-option">
         <div>
           <h2>Preço</h2>
-          <p>{{ cheapestShipping.cost_transport }}</p>
+          <p>
+            {{
+              cheapestShipping.cost_transport.toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+              })
+            }}
+          </p>
         </div>
       </article>
       <article class="BestTransport_options-option">
@@ -30,7 +37,14 @@
       <article class="BestTransport_options-option">
         <div>
           <h2>Preço</h2>
-          <p>{{ fasterShipping.cost_transport }}</p>
+          <p>
+            {{
+              fasterShipping.cost_transport.toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+              })
+            }}
+          </p>
         </div>
       </article>
     </section>
@@ -44,7 +58,7 @@ import { type ShippingType } from '@/types/ShippingType'
 const ShippingDefault: ShippingType = {
   id: 0,
   name: '',
-  cost_transport: '',
+  cost_transport: 0,
   city: '',
   lead_time: ''
 }

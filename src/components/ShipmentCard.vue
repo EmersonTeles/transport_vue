@@ -46,7 +46,7 @@ interface ResponseType {
 const ShippingDefault: ShippingType = {
   id: 0,
   name: '',
-  cost_transport: '',
+  cost_transport: 0,
   city: '',
   lead_time: ''
 }
@@ -60,7 +60,7 @@ export default defineComponent({
       searchOpen: false,
       cheapestShipping: ShippingDefault,
       fasterShipping: ShippingDefault,
-      data: [] as ResponseType[] | null
+      data: [] as ResponseType[]
     }
   },
   watch: {
@@ -103,55 +103,59 @@ export default defineComponent({
       heavy = false
       return heavy
     },
+    formatToNumber(text: String) {
+      return Number(text.replace(/[^0-9.-]+/g, ''))
+    },
     getCheapestShipping() {
       if (!this.data) return
+      if (this.data.length == 0) return
       let atual_cost_transport = this.isHeavy()
-        ? this.data[0].cost_transport_heavy
-        : this.data[0].cost_transport_light
+        ? this.formatToNumber(this.data[0].cost_transport_heavy)
+        : this.formatToNumber(this.data[0].cost_transport_light)
+      let price_times_weight = atual_cost_transport * Number(this.weight)
       this.cheapestShipping = {
         ...this.data[0],
-        cost_transport: atual_cost_transport
+        cost_transport: price_times_weight
       }
       for (let i = 1; i < this.data.length; i++) {
         atual_cost_transport = this.isHeavy()
-          ? this.data[i].cost_transport_heavy
-          : this.data[i].cost_transport_light
+          ? this.formatToNumber(this.data[i].cost_transport_heavy)
+          : this.formatToNumber(this.data[i].cost_transport_light)
 
-        if (
-          this.formatToNumber(this.cheapestShipping.cost_transport) >
-          this.formatToNumber(atual_cost_transport)
-        ) {
+        if (this.cheapestShipping.cost_transport > atual_cost_transport * Number(this.weight)) {
+          price_times_weight = atual_cost_transport * Number(this.weight)
           this.cheapestShipping = {
             ...this.data[i],
-            cost_transport: atual_cost_transport
+            cost_transport: price_times_weight
           }
         }
       }
     },
-    formatToNumber(text: String) {
-      return Number(text.replace(/[^0-9.-]+/g, ''))
-    },
     getFasterShipping() {
       if (!this.data) return
+      if (this.data.length == 0) return
       let atual_cost_transport = this.isHeavy()
-        ? this.data[0].cost_transport_heavy
-        : this.data[0].cost_transport_light
+        ? this.formatToNumber(this.data[0].cost_transport_heavy)
+        : this.formatToNumber(this.data[0].cost_transport_light)
+
+      let price_times_weight = atual_cost_transport * Number(this.weight)
       this.fasterShipping = {
         ...this.data[0],
-        cost_transport: atual_cost_transport
+        cost_transport: price_times_weight
       }
       for (let i = 1; i < this.data.length; i++) {
         atual_cost_transport = this.isHeavy()
-          ? this.data[i].cost_transport_heavy
-          : this.data[i].cost_transport_light
+          ? this.formatToNumber(this.data[i].cost_transport_heavy)
+          : this.formatToNumber(this.data[i].cost_transport_light)
 
         if (
           this.formatToNumber(this.fasterShipping.lead_time) >
           this.formatToNumber(this.data[i].lead_time)
         ) {
+          price_times_weight = atual_cost_transport * Number(this.weight)
           this.fasterShipping = {
             ...this.data[i],
-            cost_transport: atual_cost_transport
+            cost_transport: price_times_weight
           }
         }
       }
